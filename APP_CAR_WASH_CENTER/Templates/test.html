@@ -1,0 +1,17 @@
+
+<script>// Create new Date object with the given timestamp
+let utcDate = new Date('2023-03-28T12:16:54.797Z');
+console.log(utcDate);
+// Calculate the time zone offset in milliseconds
+let timeZoneOffset = utcDate.getTimezoneOffset();
+console.log(timeZoneOffset);
+// Create new Date object with the local timestamp (subtract the offset)
+let localDate = new Date(utcDate.getTime() - timeZoneOffset);
+console.log(localDate);
+
+// Format the local date string with the time zone offset
+let formattedDateString = localDate.toString();
+
+console.log(formattedDateString); // Tue Mar 28 2023 17:30:00 GMT+0530 (India Standard Time)
+
+</script>

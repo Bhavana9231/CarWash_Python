@@ -1,0 +1,303 @@
+    {% extends 'Base.html'%}
+    {% block content%}
+    {% if messages %}
+        {% for message in messages %}
+         {% if message.tags %}  <script>alert("{{ message }}")</script> {% endif %}
+
+        {% endfor %}
+
+    {% endif %}
+    {%load static%}
+
+
+
+<div style="background-image:  url('/media/bg.jpg'); background-repeat:no-repeat;background-size:cover;  height:687px; width:100%;">
+
+
+<!-- Modal for view button -->
+<!-- View Modal -->
+<div class="modal fade" id="myModal1" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Teacher Details</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+             <div class="container">
+        <div class="row" >
+           <form action="/Add_Farmer/" method="POST" enctype="multipart/form-data">
+            {%csrf_token%}
+             <div class="mb-3">
+                <label for="formGroupExampleInput" class="form-label">ID</label>
+                <input type="text" class="form-control" name="updateid"  id="updateid" readonly>
+            </div>
+                <div class="mb-3">
+                <label for="formGroupExampleInput" class="form-label">Name</label>
+                <input type="text" class="form-control"  name="updatename"  id="updatename" readonly>
+            </div>
+            <div class="mb-3">
+                <label for="formGroupExampleInput" class="form-label">Age</label>
+                <input type="text" class="form-control"  name="updateage" id="updateage" readonly>
+            </div>
+            <div class="mb-3">
+                <label for="formGroupExampleInput" class="form-label">Address</label>
+                <input type="text" class="form-control"  name="updateadd" id="updateadd" readonly>
+            </div>
+            <div class="mb-3">
+                <label for="formGroupExampleInput" class="form-label">Number</label>
+                <input type="text" class="form-control"  name="updatephone" id="updatephone" readonly>
+            </div>
+              <div class="mb-3">
+                <label for="formGroupExampleInput" class="form-label">Course</label>
+                <input type="text" class="form-control"  name="updatesub" id="updatesub" readonly>
+            </div>
+              <div class="mb-3">
+                <label for="formGroupExampleInput" class="form-label">Department</label>
+                <input type="text" class="form-control"  name="updatedept" id="updatedept" readonly>
+            </div>
+           </form>
+        </div>
+    </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ------------------------------------------------------------------------------------------------------------- -->
+
+<!-- Modal for view button -->
+<!-- View Modal -->
+<div class="modal fade" id="myModal2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">ADD BOOTHS</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+         <form action="/Update_Booth/" method="POST" enctype="multipart/form-data">
+                {% csrf_token %} 
+            <div class="container row">
+                <div class="mb-3">
+                    <label for="formGroupExampleInput" class="form-label">Booth ID</label>
+                   <input type="text" class="form-control" id="1updateid" name="1updateid" required readonly>
+                </div>
+               <div class="mb-3">
+                    <label for="formGroupExampleInput" class="form-label">Type of booth</label>
+                   <input type="text" class="form-control" id="1updatename" name="1updatename" required readonly>
+                </div>
+
+                <div class="mb-3">
+                    <label for="formGroupExampleInput" class="form-label">Normal Amount</label>
+                    <input type="text" class="form-control" id="1updateage" name="1updateage" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="formGroupExampleInput" class="form-label">Peak Hour Amount</label>
+                    <input type="text" class="form-control" id="1updatephone" name="1updatephone" required>
+                </div>
+                  <div class="mb-3">
+                    <label for="formGroupExampleInput" class="form-label">Status</label>
+                    <select class="form-select" name="1updateadd" >
+                        <option id="1updateadd" selected>Select Status</option>
+
+                        <option value="Enabled">Enabled</option>
+                        <option value="Disabled">Disabled</option>
+                        
+                    </select>
+                </div>
+
+
+
+               
+
+
+
+                
+            </div>
+            <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <input class="btn btn-secondary" type="submit" name="submit">
+      </div>
+            </form>
+      </div>
+      
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">ADD BOOTHS</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form action="/Add_Booths/" method="POST" enctype="multipart/form-data">
+                {% csrf_token %} 
+            <div class="container row">
+               <div class="mb-3">
+                    <label for="formGroupExampleInput" class="form-label">Type of booth</label>
+                    <select class="form-select" aria-label="Select Type of booth" name="Type_of_booth">
+                        <option selected>Select Type of booth</option>
+                        <option value="Basic">Basic</option>
+                        <option value="Standard">Standard</option>
+                        <option value="Premium">Premium</option>
+                        
+                    </select>
+                </div>
+
+
+                <div class="mb-3">
+                    <label for="formGroupExampleInput" class="form-label">Normal Amount</label>
+                    <input type="number" class="form-control" id="Price_NA" name="Price_NA" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="formGroupExampleInput" class="form-label">Peak Hour Amount</label>
+                    <input type="number" class="form-control" id="Price_PA" name="Price_PA" required>
+                </div>
+                <div class="mb-3">
+                    <label for="formGroupExampleInput" class="form-label">Number of Cars</label>
+                    <input type="number" class="form-control" id="car_count" name="car_count">
+                </div>
+                <div class="mb-3">
+                    <label for="formGroupExampleInput" class="form-label">Each Car Duration</label>
+                    <input type="number" class="form-control" id="Duration" name="Duration" placeholder="Enter seconds">
+                </div>
+                  <div class="mb-3">
+                    <label for="formGroupExampleInput" class="form-label">Status</label>
+                    <select class="form-select" name="Status">
+                        <option selected>Select Status</option>
+                        <option value="Enabled">Enabled</option>
+                        <option value="Disabled">Disabled</option>
+                        
+                    </select>
+                </div>
+                 </div>
+            <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <input class="btn btn-secondary" type="submit" name="submit">
+      </div>
+            </form>
+      </div>
+      
+    </div>
+  </div>
+</div>
+  
+  <div class="container" style="padding-top: 10px;">
+
+    <div style="display:flex; justify-content: right;align-items: right;">
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+            Add Booths
+        </button>
+    </div>
+    <br>
+    <table class="table table-hover table-dark table-stripped">
+        <thead>
+
+
+
+            <td>Booth ID</td>
+            <td>Booth Name</td>
+            <td>Price_NA</td>
+            <td>Price_PA</td>
+            <td>Status</td>
+             <td colspan="3"style="text-align:center">Action</td>
+            
+        </thead>
+
+        <tbody>
+
+
+
+
+            {%for i in booth%}
+            <tr>
+                <td>{{i.id}}</td>
+                <td>{{i.Type_of_booth}}</td>
+                
+                <td>{{i.Price_NA}}</td>
+                <td>{{i.Price_PA}}</td>
+                <td>{{i.Status}}</td>
+                <td>  
+                </td>
+
+                <td> 
+                    <input type="button" class="btn btn-success "id="{{i.id}}
+                                                            ${{i.Type_of_booth}}
+                                                            ${{i.Price_NA}}
+                                                            ${{i.Price_PA}}
+                                                            ${{i.Status}}
+                                                            "
+                             value="Update" onclick="Update(this)" style="width: 100%;">
+                </td>
+               
+
+            </tr>
+            {%endfor%}
+        </tbody>
+    </table>
+  </div>
+</div>
+
+
+
+<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script type="text/javascript">
+
+    function View(me){
+        $('#myModal1').modal('show');
+        var id          = me.id;
+        var str         = id.split("$");
+        var ids         = str[0];
+        var Name        = str[1];
+        var Age         = str[2];
+        var Phone       = str[3];
+        var Address     = str[4];
+        var Subject     = str[5];
+        var Department     = str[6];
+       
+
+        document.getElementById("updateid").value       = ids;
+        document.getElementById("updatename").value     = Name;
+        document.getElementById("updateage").value      = Age;
+        document.getElementById("updatephone").value    = Phone;
+        document.getElementById("updateadd").value      = Address;
+        document.getElementById("updatesub").value      = Subject;
+        document.getElementById("updatedept").value      = Department;
+        
+    }
+
+    function Update(me){
+        $('#myModal2').modal('show');
+        var id          = me.id;
+        var str         = id.split("$");
+        var ids         = str[0];
+        var Name        = str[1];
+        var Age         = str[2];
+        var Phone       = str[3];
+        var Address     = str[4];
+       
+       
+
+        document.getElementById("1updateid").value       = ids;
+        document.getElementById("1updatename").value     = Name;
+        document.getElementById("1updateage").value      = Age;
+        document.getElementById("1updatephone").value    = Phone;
+        document.getElementById("1updateadd").innerHTML      = Address;
+      
+        
+    }
+
+    </script>
+    
+ {% endblock %}

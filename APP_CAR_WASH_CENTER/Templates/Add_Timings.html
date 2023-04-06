@@ -1,0 +1,78 @@
+{% extends 'Base.html'%}
+    {% block content%}
+    {% if messages %}
+        {% for message in messages %}
+         {% if message.tags %}  <script>alert("{{ message }}")</script> {% endif %}
+
+        {% endfor %}
+
+    {% endif %}
+    {%load static%}
+
+
+
+
+
+
+
+
+<div style="background-image:  url('/media/bg.jpg'); background-repeat:no-repeat;background-size:cover;  height:687px; width:100%;">
+    
+
+    <div  style="display: flex;justify-content: center;align-items: center;padding-top: 50px;padding-right: 50px;">
+        <div style="height: 500px;width: 600px;border: solid 2px;border-radius: 5px;background-color:rgba(255,253,208,0.5);">
+            <br>
+            <center><h3>Add Timings</h3></center>
+            <hr>
+            <form action="/Add_Timings/" method="POST" enctype="multipart/form-data">
+                {% csrf_token %} 
+            <div class="container row">
+                <h5>Car Wash Center:</h5>
+               <div class="col-md-6">
+                    <label for="formGroupExampleInput" class="form-label">Start Time</label>
+                    <input type="time" id="Stime" name="Stime"
+        required>
+                </div>
+                <div class="col-md-6">
+                    <label for="formGroupExampleInput" class="form-label">End Time</label>
+                    <input type="time" id="ETime" name="ETime" required>
+                </div>
+                </div>
+                <br>
+                  <div class="container row">
+                    <h5>Peak Hour Timing 1: </h5>
+               <div class="col-md-6">
+                    <label for="formGroupExampleInput" class="form-label">Start Time</label>
+                    <input type="time" id="P1Stime" name="P1Stime" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="formGroupExampleInput" class="form-label">End Time</label>
+                   <input type="time" id="P1Etime" name="P1Etime" required>
+                </div>
+                </div>
+                <br>
+
+                <div class="container row">
+                    <h5>Peak Hour Timing 2: </h5>
+               <div class="col-md-6">
+                    <label for="formGroupExampleInput" class="form-label">Start Time</label>
+                    <input type="time" id="P2Stime" name="P2Stime" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="formGroupExampleInput" class="form-label">End Time</label>
+                   <input type="time" id="P2Etime" name="P2Etime" required>
+                </div>
+                </div> 
+                <br>
+                 <div class="container row">
+                
+                   <center> <input class="btn btn-secondary" type="submit" name="ADD" value="ADD"></center>
+                
+            </div>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{%endblock%}

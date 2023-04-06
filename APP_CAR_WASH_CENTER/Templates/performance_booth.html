@@ -1,0 +1,332 @@
+{% extends 'Base.html'%}
+    {% block content%}
+    {% if messages %}
+        {% for message in messages %}
+         {% if message.tags %}  <script>alert("{{ message }}")</script> {% endif %}
+
+        {% endfor %}
+
+    {% endif %}
+    {%load static%}
+<div style="background-image:  url('/media/bg.jpg'); background-repeat:no-repeat;background-size:cover;  height:687px; width:100%;">
+ <style>
+    #booth-timers {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+
+    #booth-timers > div {
+        flex-basis: calc(33.33% - 20px);
+        margin-bottom: 20px;
+        max-width: 1000px; /* adjust as needed */
+    }
+
+    #booth-timers h2 {
+        font-size: 1.5em;
+        margin-bottom: 0.5em;
+    }
+
+    #booth-timers p {
+        font-size: 1.2em;
+        margin-bottom: 0.5em;
+    }
+
+    #booth-timers button {
+        background-color: #4CAF50;
+        border: none;
+        color: white;
+        padding: 10px 20px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin-right: 4px 2px;
+        cursor: pointer;
+    }
+
+    #booth-timers input[type=text], 
+    #booth-timers input[type=number] {
+        width: 100%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        box-sizing: border-box;
+        border: none;
+        border-radius: 4px;
+        background-color: #f8f8f8;
+        font-size: 1.2em;
+    }
+
+    #booth-timers ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    #booth-timers ul li {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 1.2em;
+        margin-bottom: 0.5em;
+    }
+
+    #booth-timers .add-car-button, #booth-timers .add-car-button1 {
+        background-color: #4CAF50;
+        border: none;
+        color: white;
+        padding: 10px 20px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+
+    #booth-timers .add-car-button:hover, #booth-timers .add-car-button1:hover {
+        background-color: #3e8e41;
+    }
+
+    #booth-timers .total-time-input {
+        width: 600px;
+    }
+
+    #booth-timers .cars-remaining-input {
+        width: 600px;
+    }
+
+    #booth-timers .amount-collected-input {
+        width: 600px;
+    }
+  
+</style>
+<button id="send-message-btn">Start Simulation</button>
+<body>
+    <h1>Booth Countdown Timers</h1>
+    <div class="row">
+    <div id="booth-timers" class="col-md-6">
+
+</div>
+    </div>
+  
+</body>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+<script>
+    // Connect to the WebSocket
+    var socket = new WebSocket('ws://localhost:8000/ws/some_url/');
+
+    // When the WebSocket connection is opened
+    socket.onopen = function(event) {
+        console.log('WebSocket connection opened');
+
+        
+    };
+    
+    // Listen for the button click event
+    $('#send-message-btn').click(function() {
+        // Send a message to start the simulation countdown
+        const message = { message: 'start_timer', };
+        socket.send(JSON.stringify(message));
+        socket.send('Hello, world!'); // Replace with your message
+    });
+    // When a message is received from the WebSocket
+    socket.onmessage = function(event) {
+        console.log('Received message:', event.data);
+
+        // Parse the message as JSON
+        var data = JSON.parse(event.data);
+        var currentTime = new Date()
+        console.log(currentTime)
+
+
+        console.log('Received data:', data.booths);
+        console.log('Received data:', data.countdowns);
+        console.log('Received data:', data.simulations);
+
+        var boothTimers = $('#booth-timers');
+
+        if (data.booths && data.booths.length > 0 && data.timings) {
+            // Loop through each booth and display a countdown timer
+            // Loop through each booth and display a countdown timer and simulation data
+            data.booths.forEach(function(booth) {
+                console.log('Processing booth:', booth);
+                
+                // Create elements to display booth information
+                var boothTimer = $('<div>');
+                var boothName = $('<h2>').text('Booth ' + booth.Type_of_booth);
+                var boothCountdown = $('<p>').text('Countdown: ');
+                var Duration = booth.Duration * 1000;
+                console.log('Processing Duration:', Duration);
+                var currentTime = new Date()
+                console.log(currentTime)
+
+                // Convert the countdown time to a Date object
+                var countdownEnd = new Date(booth.countdown);
+                console.log(countdownEnd)
+
+                // Use Moment.js to format the countdown timer
+                var countdownText = moment(countdownEnd).fromNow();
+                boothCountdown.text('Countdown: ' + countdownText);
+
+                // Create elements to display simulation data
+                var simulationData = $('<div>');
+                //var simulationHeader = $('<h3>').text('Simulation Data');
+                var simulationList = $('<ul>');
+                var buttons = $('<div>');
+
+                // Find the simulation data for this booth
+                var simulation = data.simulations.find(function(sim) {
+                    return sim.Bid === booth.id;
+                });
+
+
+                // If simulation data was found, display it
+                if (simulation )
+                	{
+                // Find other booths with the same type
+                	
+
+                    simulationList.append($('<li>').text('Cars Done: ' + simulation.Cars_done));
+                    simulationList.append($('<li>').text('Cars Remaininge: ' + simulation.Cars_remaining));
+                    simulationList.append($('<li>').text('Amount Collected: ' + simulation.Amount_collected));
+                    simulationList.append($('<li>').text('Total Time Taken: ' + booth.countdown));
+                    simulationList.append($('<li>').text('Date: ' + simulation.Date));
+                    simulationList.append($('<li>').text('Total Time (min): ' + simulation.Total_time_min));
+
+                    
+                    
+
+                } else {
+                    simulationList.append($('<li>').text('No simulation data found'));
+                }
+                /*const sameTypeBooths = data.booths.filter(booth => booth.Type_of_booth === 'Basic');
+				const totalCars = sameTypeBooths.reduce((acc, booth) => acc + simulation.Cars_remaining, 0);
+				const maxCars = sameTypeBooths[0].Max_cars;*/
+
+                // Append booth and simulation data to the timer div
+                boothTimer.append(boothName);
+                boothTimer.append(boothCountdown);
+                //simulationData.append(simulationHeader);
+                simulationData.append(simulationList);
+                boothTimer.append(simulationData);
+
+                // Append the timer div to the booth timers container
+                boothTimers.append(boothTimer);
+
+                // Update countdown timer every second
+                var intervalId = setInterval(function() {
+                // Update countdown timer every second
+                    
+                    var currentTime = new Date().getTime();
+                    var distance = countdownEnd.getTime() - currentTime;
+                    // Calculate days, hours, minutes and seconds
+                    var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                    var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                    var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                    var Stime = data.timings[0].Stime;  
+                    var ETime = data.timings[0].ETime; 
+                    var P1Stime = data.timings[0].P1Stime;
+                    var P1Etime = data.timings[0].P1Etime;
+                    var P2Stime = data.timings[0].P2Stime;
+                    var P2Etime = data.timings[0].P2Etime;
+                    console.log('Stime:', Stime);
+                    console.log('ETime:', ETime);
+                    console.log('P1Stime:', P1Stime);
+                    console.log('P1Etime:', P1Etime);
+                    console.log('P2Stime:', P2Stime);
+                    console.log('P2Etime:', P2Etime);
+                    function getTimeFromDate(date) {
+                    const hours = date.getHours().toString().padStart(2, "0");
+                    const minutes = date.getMinutes().toString().padStart(2, "0");
+                    const seconds = date.getSeconds().toString().padStart(2, "0");
+                    return `${hours}:${minutes}:${seconds}`;
+                }
+                    const date = new Date();
+                    const time = getTimeFromDate(date);
+                    console.log(time);
+                    if (P1Stime <= time && time <= P1Etime) {
+                        price = booth.Price_PA
+                        simulation.Cars_remaining--;
+                    simulation.Cars_done++;
+                    simulation.Amount_collected += price;
+                    console.log(simulation.Amount_collected);
+                        console.log(`The time ${time} is between ${P1Stime} and ${P1Etime}`);
+                    }
+                    else if(P2Stime <= time && time <= P2Etime)
+                    {
+                        price = booth.Price_PA
+                        simulation.Cars_remaining--;
+                        simulation.Cars_done++;
+                        simulation.Amount_collected += price;
+                        console.log(simulation.Amount_collected);
+                        console.log(`The time ${time} is between ${P2Stime} and ${P2Etime}`);
+                    }
+                    else 
+                    {
+                        price = booth.Price_NA
+                        simulation.Cars_remaining--;
+                        simulation.Cars_done++;
+                        simulation.Amount_collected += price;
+                        console.log(simulation.Amount_collected);
+
+                        console.log(`The time ${time} is not between`);
+                    }
+                    simulationList.find('li:contains("Cars Done")').text('Cars Done: ' + simulation.Cars_done);
+                    simulationList.find('li:contains("Cars Remaininge")').text('Cars Remaininge: ' + simulation.Cars_remaining);
+                    simulationList.find('li:contains("Amount Collected")').text('Amount Collected: ' + simulation.Amount_collected);
+                    // Update the input box value with the new simulation data value
+                    
+                    var booth_id =  booth.id
+                    console.log(booth_id)
+                    boothCountdown.text('Countdown: ' + days + 'd ' + hours + 'h ' + minutes + 'm ' + seconds + 's');
+                        // Update countdown timer
+                    const message = { message: 'update', data: { cars_done: simulation.Cars_done, cars_remaining: simulation.Cars_remaining,id:booth_id,price:simulation.Amount_collected } };
+                    socket.send(JSON.stringify(message));
+                    socket.send('Hello, world!'); // Replace with your message
+                    
+                        // Stop timer if cars_remaining is zero
+                    if (simulation.Cars_remaining == 0) {
+                    	const sameTypeBooths = data.booths.filter(otherBooth => otherBooth.Type_of_booth === booth.Type_of_booth && otherBooth.id !== booth.id);
+                	console.log('sameTypeBooths',sameTypeBooths)
+                	// Check if there are any other booths with the same type
+                	if (sameTypeBooths.length > 0) {
+                	// Find the first other booth with cars remaining
+                		const otherBooth = sameTypeBooths.find(otherBooth => {
+                			const otherSimulation = data.simulations.find(sim => sim.Bid === otherBooth.id);
+                			return otherSimulation && otherSimulation.Cars_remaining > 0;
+                		});
+                		if (otherBooth) {
+                			Max_cars = 500
+                			
+                			const otherSimulation = data.simulations.find(sim => sim.Bid === otherBooth.id);
+                			console.log('booth.Max_cars:', booth.Max_cars);
+							console.log('otherSimulation.Cars_remaining:', otherSimulation.Cars_remaining);
+                			const carsToShift = Math.min(booth.Max_cars - simulation.Cars_done, otherSimulation.Cars_remaining);
+                			console.log('otherSimulation.Cars_remaining:', carsToShift);
+                			simulation.Cars_remaining += carsToShift;
+                			otherSimulation.Cars_remaining -= carsToShift;
+                		}
+                	}
+                	
+                    }
+                    }, Duration);
+                
+            });
+          
+
+    }else {
+    console.log('No booth data received');
+}
+};
+
+    // Handle connection errors
+    socket.onerror = function(event) {
+        console.error('WebSocket error:', event);
+    };           
+
+</script>
+ {% endblock %}

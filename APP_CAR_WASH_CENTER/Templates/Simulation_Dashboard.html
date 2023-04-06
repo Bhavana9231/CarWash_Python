@@ -1,0 +1,248 @@
+    {% extends 'Base.html'%}
+    {% block content%}
+    {% if messages %}
+        {% for message in messages %}
+         {% if message.tags %}  <script>alert("{{ message }}")</script> {% endif %}
+
+        {% endfor %}
+
+    {% endif %}
+    {%load static%}
+
+<button id="send-message-btn">Start Simulation</button>
+<!--<body>
+	{%for i in booth%}
+
+			<div class="col-6">
+				<br>
+				<img class="thumbnail" src="{{i.photo.url}}">
+				<div class="box-element product">
+					<table class="table table-hover table-dark table-stripped">
+        <thead>
+
+
+
+            <td>Booth ID</td>
+            <td>Booth Name</td>
+            <td>Normal Amount</td>
+            <td>Peak Hour Amount</td>
+            <td>Status</td>
+            <td colspan="3"style="text-align:center">Action</td>
+            
+        </thead>
+
+        <tbody>
+
+
+            <tr>
+                <td>{{i.id}}</td>
+                <td>{{i.Type_of_booth}}</td>
+                
+                <td> <input type="number" class="form-control" id="Price_NA" name="Price_NA"  required></td>
+                <td><input type="number" class="form-control" id="Price_PA" name="Price_PA" value = "{{i.Cars_remaining}}" required></td>
+                <td>{{i.Status}}</td>
+                <td>  
+                </td>
+
+                <td> 
+                    <input type="button" class="btn btn-success "id="{{i.Bid}}
+                                                            ${{i.Cars_Done}}
+                                                            ${{i.Cars_remaining}}
+                                                            ${{i.}}
+                                                            ${{i.Status}}
+                                                            "
+                             value="Update" onclick="Update(this)" style="width: 100%;">
+                </td>
+               
+
+            </tr>
+     
+        </tbody>
+    </table>
+    </div> 
+            </div>
+
+
+            {% endfor %}
+    -->
+					
+			
+	</div>  
+    <h1>Booth Countdown Timers</h1>
+    <div class="row">
+    <div id="booth-timers" class="col-md-6">
+
+</div>
+    </div>
+  
+</body>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+<script>
+    // Connect to the WebSocket
+    var socket = new WebSocket('ws://localhost:8000/ws/some_url/');
+
+    // When the WebSocket connection is opened
+    socket.onopen = function(event) {
+        console.log('WebSocket connection opened');
+
+        
+    };
+    
+    // Listen for the button click event
+    $('#send-message-btn').click(function() {
+        // Send a message to start the simulation countdown
+        const message = { message: 'start_timer', };
+        socket.send(JSON.stringify(message));
+        socket.send('Hello, world!'); // Replace with your message
+    });
+    // When a message is received from the WebSocket
+    socket.onmessage = function(event) {
+        console.log('Received message:', event.data);
+
+        // Parse the message as JSON
+        var data = JSON.parse(event.data);
+
+
+        console.log('Received data:', data.booths);
+        console.log('Received data:', data.countdowns);
+        console.log('Received data:', data.simulations);
+
+        var boothTimers = $('#booth-timers');
+
+        if (data.booths && data.booths.length > 0) {
+            // Loop through each booth and display a countdown timer
+            // Loop through each booth and display a countdown timer and simulation data
+            data.booths.forEach(function(booth) {
+                console.log('Processing booth:', booth);
+                
+                // Create elements to display booth information
+                var boothTimer = $('<div>');
+                var boothName = $('<h2>').text('Booth ' + booth.Type_of_booth);
+                var boothCountdown = $('<p>').text('Countdown: ');
+                var Duration = booth.Duration * 1000;
+                var button = $('<button>').text('Click me');
+                var inputBox = $('<input>').attr('type', 'text');
+                console.log('Processing Duration:', Duration);
+
+                // Convert the countdown time to a Date object
+                var countdownEnd = new Date(booth.countdown);
+
+                // Use Moment.js to format the countdown timer
+                var countdownText = moment(countdownEnd).fromNow();
+                boothCountdown.text('Countdown: ' + countdownText);
+
+                // Create elements to display simulation data
+                var simulationData = $('<div>');
+                //var simulationHeader = $('<h3>').text('Simulation Data');
+                var simulationList = $('<ul>');
+                var buttons = $('<div>');
+                var textBox = $('#textbox-id');
+
+
+                // Find the simulation data for this booth
+                var simulation = data.simulations.find(function(sim) {
+                    return sim.Bid === booth.id;
+                });
+
+                // If simulation data was found, display it
+                // If simulation data was found, display it
+                if (simulation) {
+                      // create the simulationList ul element
+  var simulationList = $('<ul>');
+  
+  // create the input fields for total time, cars remaining, and amount collected
+  var totalTimeInput = $('<input>').attr('type', 'number').attr('name', 'totalTime').addClass('total-time-input').attr('data-booth-id', booth.id).val(simulation.Cars_done);
+  var carsRemainingInput = $('<input>').attr('type', 'number').attr('name', 'carsRemaining').addClass('cars-remaining-input').attr('data-booth-id', booth.id).val(simulation.Cars_remaining);
+  var amountCollectedInput = $('<input>').attr('type', 'number').attr('name', 'amountCollected').addClass('amount-collected-input').attr('data-booth-id', booth.id).val(simulation.Amount_collected);
+  
+  // create the "Cars Done" list item
+  var carsDoneListItem = $('<li>').text('Cars Done: ' + simulation.Cars_done);
+  
+  // create the "Cars Remaining" list item with an "Add Car" button
+  var addCarButton = $('<button>').text('Add Car').addClass('add-car-button').attr('data-booth-id', booth.id);
+  var carsRemainingListItem = $('<li>').text('Cars Remaining: ').append(carsRemainingInput, addCarButton);
+  
+  // append the input fields and list items to the simulationList ul element
+  simulationList.append(totalTimeInput, carsRemainingListItem, amountCollectedInput, carsDoneListItem);
+  
+  // set the initial values of the input fields
+  $('.total-time-input[data-booth-id="' + booth.id + '"]').val(simulation.Cars_done);
+  $('.cars-remaining-input[data-booth-id="' + booth.id + '"]').val(simulation.Cars_remaining);
+  $('.amount-collected-input[data-booth-id="' + booth.id + '"]').val(simulation.Amount_collected);
+  
+  // attach a click event handler to the "Add Car" button
+  addCarButton.on('click', function() {
+    // get the current value of the "Cars Remaining" input field
+    var currentCarsRemaining = parseInt($(this).prev('.cars-remaining-input').val());
+    
+    // add 1 to the current value
+    var newCarsRemaining = currentCarsRemaining + 1;
+    
+    // set the new value of the "Cars Remaining" input field
+    $(this).prev('.cars-remaining-input').val(newCarsRemaining);
+  });
+  
+                } else {
+                    simulationList = $('<ul>').append($('<li>').text('No simulation data found'));
+                }
+                // Append booth and simulation data to the timer div
+                var boothTimer = $('<div>').addClass('booth-timer');
+                var boothName = $('<h3>').text('Booth ' + booth.id);
+                var boothCountdown = $('<p>').addClass('countdown');
+                var buttons = $('<div>').addClass('buttons');
+                var simulationData = $('<div>').addClass('simulation-data');
+                boothTimer.append(boothName, boothCountdown, buttons);
+                simulationData.append($('<h4>').text('Simulation Data'), simulationList);
+                boothTimer.append(simulationData);
+                
+                // Append the timer div to the booth timers container
+                buttons.append(addCarButton);
+                boothTimers.append(boothTimer);
+
+                // Update countdown timer every second
+                var intervalId = setInterval(function() {
+                    var currentTime = new Date().getTime();
+                    var distance = countdownEnd.getTime() - currentTime;
+                    // Calculate days, hours, minutes and seconds
+                    var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                    var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                    var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                    simulation.Cars_remaining--;
+                    simulation.Cars_done++;
+                    simulation.Amount_collected += booth.Price_NA;
+                    // Update the values of the text boxes
+                    $('.total-time-input[data-booth-id="' + booth.id + '"]').val(simulation.Cars_done);
+                    $('.cars-remaining-input[data-booth-id="' + booth.id + '"]').val(simulation.Cars_remaining);
+                    $('.amount-collected-input[data-booth-id="' + booth.id + '"]').val(simulation.Amount_collected);
+                    var booth_id =  booth.id
+                    console.log(booth_id)
+                        // Update countdown timer
+                    const message = { message: 'update', data: { cars_done: simulation.Cars_done, cars_remaining: simulation.Cars_remaining,id:booth_id,price:simulation.Amount_collected } };
+                    socket.send(JSON.stringify(message));
+                    socket.send('Hello, world!'); // Replace with your message
+                    boothCountdown.text('Countdown: ' + days + 'd ' + hours + 'h ' + minutes + 'm ' + seconds + 's');
+                        // Stop timer if cars_remaining is zero
+                    if (simulation.Cars_remaining === 0) {
+                            clearInterval(intervalId);
+                        }
+                    }, Duration);
+                
+            });
+          
+
+    }else {
+    console.log('No booth data received');
+}
+};
+    // Handle connection errors
+    socket.onerror = function(event) {
+        console.error('WebSocket error:', event);
+    };           
+function Update(){
+    alert('done');
+
+}
+</script>
+ {% endblock %}
